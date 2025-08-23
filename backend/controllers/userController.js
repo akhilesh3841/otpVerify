@@ -29,13 +29,15 @@ export const requestOTP = async (req, res) => {
 
 // Step 2: Verify OTP & CAPTCHA
 export const verifyOTP = async (req, res) => {
-    const { otp, tempToken } = req.body;
+    const { otp, tempToken,captcha  } = req.body;
 
-    if (!otp || !tempToken) return res.status(400).json({ msg: "All fields required" });
+    if (!otp || !tempToken ||!captcha) return res.status(400).json({ msg: "All fields required" });
 
-    // Verify captcha first (your captcha verification logic)
-    // const isCaptchaValid = true; // replace with actual verification
-    // if (!isCaptchaValid) return res.status(400).json({ msg: "Captcha invalid" });
+      const captchaVerify = await axios.post(
+            `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${captcha}`
+        );
+        if (!captchaVerify.data.success) return res.status(400).json({ msg: "Captcha invalid" });
+
 
     try {
         // Decode temporary token
