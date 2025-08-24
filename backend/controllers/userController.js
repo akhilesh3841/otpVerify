@@ -2,7 +2,10 @@ import jwt from "jsonwebtoken";
 import {User} from "../models/userSchema.js"; // your mongoose model
 import {sendOTP} from "../temp/sendOTP.js"; // import sendOTP function
 import dotenv from "dotenv";
+import axios from "axios"
 dotenv.config();
+
+
 
 
 export const requestOTP = async (req, res) => {
@@ -11,6 +14,12 @@ export const requestOTP = async (req, res) => {
     if (!mobile) return res.status(400).json({ msg: "Mobile required" });
 
     try {
+        // Check if user already exists
+        const existingUser = await User.findOne({ mobile });
+        if (existingUser) {
+            return res.status(400).json({ msg: "Mobile number already registered" });
+        }
+
         // Create temporary token with mobile
         const tempToken = jwt.sign({ mobile }, process.env.TEMP_SECRET, { expiresIn: '10m' });
 
@@ -18,25 +27,24 @@ export const requestOTP = async (req, res) => {
         const otp = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
         await sendOTP(mobile, otp);
 
-        // You can store OTP in DB or in-memory store with expiry
-        // For example: save OTP in a temporary collection or cache
+        // Optional: store OTP in DB or cache
 
         res.status(200).json({ msg: "OTP sent", tempToken });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ msg: "Server error" });
     }
 };
 
-// Step 2: Verify OTP & CAPTCHA
 export const verifyOTP = async (req, res) => {
-    const { otp, tempToken,captcha  } = req.body;
+    const { otp, tempToken  } = req.body;
 
-    if (!otp || !tempToken ||!captcha) return res.status(400).json({ msg: "All fields required" });
+    if (!otp || !tempToken ) return res.status(400).json({ msg: "All fields required" });
 
-      const captchaVerify = await axios.post(
-            `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${captcha}`
-        );
-        if (!captchaVerify.data.success) return res.status(400).json({ msg: "Captcha invalid" });
+    //   const captchaVerify = await axios.post(
+    //         `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${captcha}`
+    //     );
+    //     if (!captchaVerify.data.success) return res.status(400).json({ msg: "Captcha invalid" });
 
 
     try {
@@ -55,6 +63,8 @@ export const verifyOTP = async (req, res) => {
         res.status(400).json({ msg: "Invalid or expired token" });
     }
 };
+
+
 
 // Step 3: Complete registration with full details
 export const register = async (req, res) => {
