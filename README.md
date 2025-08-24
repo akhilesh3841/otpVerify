@@ -1,17 +1,19 @@
-Government Portal User Authentication
+🏛️ Government Portal User Authentication
 
-This project is a user authentication system for a government portal, featuring signup with OTP verification using Twilio, and login/logout functionality. The frontend is built in React and the backend is powered by Node.js + Express + MongoDB. Tailwind CSS is used for styling the pages.
+This project implements a secure user authentication system for a government portal. It features OTP-based signup using Twilio, login/logout functionality, and a clean, responsive UI built with React and Tailwind CSS.
 
-Features
+🚀 Features
 Signup with OTP Verification
 
 Users register using their mobile number.
 
-A 6-digit OTP is sent to the user via Twilio SMS.
+A 6-digit OTP is sent via Twilio SMS.
 
-OTP is temporary and expires in 10 minutes.
+OTP is temporary and expires after 10 minutes.
 
-Upon OTP verification, users can complete their registration with:
+Only unregistered mobile numbers can request OTP.
+
+After OTP verification, users complete registration with:
 
 Full Name
 
@@ -19,50 +21,54 @@ Email
 
 Password
 
-Prevents duplicate mobile numbers from registering.
-
 Login
 
-Users can login using their registered mobile number and password.
+Users login using registered mobile number and password.
 
-Validates credentials against the database.
+Proper validation ensures correct credentials.
 
-Displays error messages for invalid login attempts.
+Displays clear success/error messages.
 
 Logout
 
-Users can log out of their session (if using cookies or token-based authentication on frontend/backend).
+Users can logout to terminate the session.
 
-Frontend
+Supports token or cookie-based authentication.
 
-Built with React using Tailwind CSS.
+🖥️ Frontend
 
-Clean and responsive government-portal style design.
+Built with React and Tailwind CSS.
 
-OTP input, registration form, and messages properly handled.
+Clean, government portal style UI.
 
-Backend
+Responsive layout for desktop and mobile.
 
-Node.js + Express for API endpoints:
+Conditional rendering ensures:
 
-/request/otp → Sends OTP to mobile using Twilio.
+OTP section only shows before verification
 
-/verify/otp → Verifies OTP and issues a temporary registration token.
+Registration form shows after OTP verification
 
-/register → Registers the user after OTP verification.
+⚙️ Backend
 
-/login → Logs in user using mobile + password.
+Built with Node.js and Express.
 
-MongoDB stores users securely.
+MongoDB for storing user data securely.
 
-JWT tokens used for temporary registration verification.
+JWT tokens for temporary registration verification.
 
-Setup Instructions
-1. Clone the Repository
+API Endpoints
+Endpoint	Method	Description
+/request/otp	POST	Send OTP to mobile via Twilio
+/verify/otp	POST	Verify OTP and issue temporary registration token
+/register	POST	Complete registration after OTP verification
+/login	POST	Login with mobile and password
+🛠️ Setup Instructions
+1️⃣ Clone the Repository
 git clone <your-repo-url>
 cd <project-folder>
 
-2. Install Dependencies
+2️⃣ Install Dependencies
 # Backend
 cd backend
 npm install
@@ -71,9 +77,9 @@ npm install
 cd ../frontend
 npm install
 
-3. Configure Environment Variables
+3️⃣ Configure Environment Variables
 
-Create a .env file in the backend folder with:
+Create a .env file in backend folder:
 
 MONGO_URI=<your_mongodb_connection_string>
 TWILIO_ACCOUNT_SID=<your_twilio_account_sid>
@@ -81,35 +87,37 @@ TWILIO_AUTH_TOKEN=<your_twilio_auth_token>
 TWILIO_SERVICE_SID=<your_twilio_service_sid>
 TEMP_SECRET=<your_jwt_temp_secret>
 
-4. Start the Backend Server
+4️⃣ Start Backend Server
 cd backend
 npm run dev
 
-5. Start the Frontend
+5️⃣ Start Frontend
 cd frontend
 npm start
 
-Usage
+🎯 Usage
 
-Open the application in your browser.
+Open the portal in your browser.
 
 Signup using your mobile number:
 
-Enter mobile → Send OTP → Enter OTP → Complete registration form.
+Enter mobile → Send OTP → Enter OTP → Fill registration form.
 
 Login using registered mobile + password.
 
-Logout (if implemented) to end the session.
+Logout to end session.
 
-Notes
+💡 Notes
 
 OTP is sent via Twilio SMS, ensure your Twilio account is active.
 
-Temporary tokens are JWTs and expire in 10 minutes.
+JWT-based temporary tokens expire in 10 minutes.
 
-Passwords are stored securely in hashed form in MongoDB.
+Passwords are hashed in MongoDB for security.
 
-Tech Stack
+Frontend validation ensures mobile/email/password formats are correct.
+
+🛠️ Tech Stack
 
 Frontend: React, Tailwind CSS
 
@@ -119,4 +127,4 @@ Database: MongoDB (Mongoose)
 
 SMS Service: Twilio
 
-Authentication: JWT for OTP verification
+Authentication: JWT
